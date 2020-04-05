@@ -10,7 +10,7 @@ import time
 print('CPU COUNT AVAILABLE FOR MULTIPROCESSING :  ' + str(mp.cpu_count()))
 
 ip_processed = []
-base_ip = '10.97.0.100'
+base_ip = '10.0.0.1'
 ports = []
 range_start = 1
 range_end = 1000
