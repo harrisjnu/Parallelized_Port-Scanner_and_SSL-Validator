@@ -1,50 +1,44 @@
 print ("Multi Process Socket Scanner")
 
-import socket
-import sys
-import timeout_decorator
+
+import multiprocessing as mp
+from function_room import scanner
+import time
 
 
 
-ip_address = "10.10.0.1"
-port = 443
-target = (ip_address,port)
+print('CPU COUNT AVAILABLE FOR MULTIPROCESSING :  ' + str(mp.cpu_count()))
+
+ip_processed = []
+base_ip = '10.97.0.100'
+ports = []
+range_start = 1
+range_end = 1000
+for port in range(range_start, range_end):
+    ports.append(port)
 
 
+if __name__ == "__main__":
+
+    targets = list()
+    for i in ports:
+        item = (base_ip,i)
+        targets.append(item)
 
 
-def scanner(target):
-    ip_address = target[0]
-    port = target[1]
-    @timeout_decorator.timeout(2, use_signals=False)
-    def timelimiter():
-        try:
-            plug = socket.socket(socket.AF_INET, socket.SOCK_STREAM)    # AF_INET: IPv4, AF_INET6: IPv6, SOCK.STREAM:TCP, SOCK.DGRAM: UDP
-            socket.setdefaulttimeout(1)
-            print("Set Timeout")
-            try:
-                print("Trying Response")
-                response = plug.connect_ex((ip_address,port))
-                print("Tried response")
-                plug.close()
-            except:
-                pass
-            if response == 0:
-                print ('Port is open')
-            else:
-                print(response)
-                print(type(response))
-                pass
-        except TimeoutError:
-            print("Time Out Error")
-        except:
-            print("Encountered some error")
-            sys.exit()
+    start = time.time()
 
-    try:
-        timelimiter()
+    processes = list()
 
-    except timeout_decorator.timeout_decorator.TimeoutError:
-        print("Time Out Error")
+    for target in targets:
+        processes.append(mp.Process(target=scanner, args=(target,)))
 
-scanner(target)
+    for p in processes:
+        p.start()
+
+    for p in processes:
+        p.join()
+
+    end = time.time()
+    print('Script execution time:', end - start)
+
