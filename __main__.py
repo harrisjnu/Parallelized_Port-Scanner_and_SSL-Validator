@@ -10,7 +10,7 @@ import time
 print('CPU COUNT AVAILABLE FOR MULTIPROCESSING :  ' + str(mp.cpu_count()))
 
 ip_processed = []
-base_ip = '10.0.0.1'
+base_ip = 'google.com'
 ports = []
 range_start = 1
 range_end = 1000
@@ -35,6 +35,7 @@ if __name__ == "__main__":
 
     for p in processes:
         p.start()
+
 
     for p in processes:
         p.join()
