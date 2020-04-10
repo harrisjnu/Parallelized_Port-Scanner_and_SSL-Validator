@@ -3,7 +3,8 @@ import ssl
 import sys
 import timeout_decorator
 
-def validatessl(ip_address,port):
+
+def validatessl(ip_address, port):
     print("SSL Validation Engine")
     # print(ip_address)
     # print(port)
@@ -11,19 +12,20 @@ def validatessl(ip_address,port):
     plug = raw.wrap_socket(socket.socket(), server_hostname=ip_address)
     plug.connect((ip_address, 443))
     certificate = plug.getpeercert()
-    #print(certificate)
+    # print(certificate)
     return certificate
 
 
-def service_name(port,protocol):
-    serviceName = socket.getservbyport(port,protocol);
+def service_name(port, protocol):
+    serviceName: str = socket.getservbyport(port, protocol);
     return serviceName
+
 
 def scanner(target):
     ip_address = target[0]
     port = target[1]
 
-    @timeout_decorator.timeout(2, use_signals=False)
+    @timeout_decorator.timeout(1, use_signals=False)
     def timelimiter():
         try:
             plug = socket.socket(socket.AF_INET,
@@ -35,11 +37,11 @@ def scanner(target):
             except:
                 pass
             if response == 0:
-                service = service_name(port,'tcp')
+                service = service_name(port, 'tcp')
                 print(f'Port {port} is open and is running {service}')
                 print(port)
                 if port == 443:
-                    res = validatessl(ip_address,port)
+                    res = validatessl(ip_address, port)
                     print("Website is SSL enabled and expires on ")
                     print(res['notAfter'])
             else:
@@ -55,4 +57,4 @@ def scanner(target):
 
     except timeout_decorator.timeout_decorator.TimeoutError:
         pass
-        #print("Time Out Error")
+        # print("Time Out Error")
